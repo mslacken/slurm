@@ -214,7 +214,7 @@ static void      _wait_for_all_threads(int secs);
 int
 main (int argc, char **argv)
 {
-	int i, pidfd pipefd;
+	int i, pidfd, pipefd;
 	int blocked_signals[] = {SIGPIPE, 0};
 	int cc;
 	char *oom_value;
@@ -299,7 +299,7 @@ main (int argc, char **argv)
 	 * Become a daemon if desired.
 	 */
 	if (conf->daemonize) {
-		pipefd = xdaemon_init()
+		pipefd = xdaemon_init();
 		if (pipefd == -1)
 			error("Couldn't daemonize slurmd: %m");
 	}
@@ -356,7 +356,7 @@ main (int argc, char **argv)
 
 	conf->pid = getpid();
 	pidfd = create_pidfile(conf->pidfile, 0);
-	if (daemonize) {
+	if (conf->daemonize) {
 		xdaemon_finish(pipefd);
 	}
 
