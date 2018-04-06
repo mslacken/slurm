@@ -53,13 +53,11 @@
 #include "src/common/xassert.h"
 
 /*
- * Double-fork and go into background.
+ * Start daemonization with double-fork and go into background.
  * Caller is responsible for umasks
  */
-int xdaemon(void)
+int xdaemon_init(void)
 {
-	int devnull;
-
 	switch (fork()) {
 		case  0 : break;        /* child */
 		case -1 : return -1;
@@ -74,10 +72,22 @@ int xdaemon(void)
 		case -1: return -1;
 		default: _exit(0);      /* exit parent */
 	}
+	return 0;
+}
 
+/*
+ * finish daemonization after pidfile was written
+ */
+
+void xdaemon_finish(void)
+{
 	/*
+	 * PID file was written, now do
 	 * dup stdin, stdout, and stderr onto /dev/null
+	 * so that systemd realizes we are daemonized
 	 */
+	int devnull;
+
 	devnull = open("/dev/null", O_RDWR);
 	if (devnull < 0)
 		error("Unable to open /dev/null: %m");
@@ -89,8 +99,18 @@ int xdaemon(void)
 		error("Unable to dup /dev/null onto stderr: %m");
 	if (close(devnull) < 0)
 		error("Unable to close /dev/null: %m");
+}
 
-	return 0;
+/* 
+ * keep depercated api
+ */
+
+int xdaemon(void)
+{
+	int ret_val;
+	ret_val= xdaemon_init();
+	xdaemon_finish();
+	return ret_val;
 }
 
 /*

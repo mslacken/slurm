@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 
 	if (daemonize) {
 		slurmctld_config.daemonize = 1;
-		if (xdaemon())
+		if (xdaemon_init())
 			error("daemon(): %m");
 		log_set_timefmt(slurmctld_conf.log_fmt);
 		log_alter(log_opts, LOG_DAEMON,
@@ -318,6 +318,9 @@ int main(int argc, char **argv)
 	 */
 	_init_pidfile();
 	_become_slurm_user();
+	if (daemonize) {
+		xdaemon_finish();
+	}
 
 	/*
 	 * Create StateSaveLocation directory if necessary.

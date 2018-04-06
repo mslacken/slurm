@@ -46,6 +46,8 @@
  * Returns -1 on error.
  */
 extern int xdaemon(void);
+extern int xdaemon_init(void);
+extern void xdamon_finish(void);
 
 /* Write pid into file pidfile if uid is not 0 change the owner of the
  * pidfile to that user.
