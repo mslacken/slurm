@@ -298,12 +298,8 @@ int main(int argc, char **argv)
 
 	if (daemonize) {
 		slurmctld_config.daemonize = 1;
-<<<<<<< HEAD
 		fd = xdaemon_init();
 		if (fd == -1)
-=======
-		if (xdaemon_init())
->>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 			error("daemon(): %m");
 		log_set_timefmt(slurmctld_conf.log_fmt);
 		log_alter(log_opts, LOG_DAEMON,
@@ -324,11 +320,7 @@ int main(int argc, char **argv)
 	_init_pidfile();
 	_become_slurm_user();
 	if (daemonize) {
-<<<<<<< HEAD
 		xdaemon_finish(fd);
-=======
-		xdaemon_finish();
->>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 	}
 
 	/*
