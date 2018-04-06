@@ -47,7 +47,11 @@
  */
 extern int xdaemon(void);
 extern int xdaemon_init(void);
+<<<<<<< HEAD
 extern void xdamon_finish(int fd);
+=======
+extern void xdamon_finish(void);
+>>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 
 /* Write pid into file pidfile if uid is not 0 change the owner of the
  * pidfile to that user.

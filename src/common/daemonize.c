@@ -58,6 +58,7 @@
  */
 int xdaemon_init(void)
 {
+<<<<<<< HEAD
 	int fds [2];
 	int n;
 	signed char priority;
@@ -68,6 +69,8 @@ int xdaemon_init(void)
 	if (pipe (fds) < 0) {
 		error("Failed to create daemon pipe");
 	}
+=======
+>>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 	switch (fork()) {
 		case  0 : break;        /* child */
 		case -1 : return -1;
@@ -105,6 +108,7 @@ int xdaemon_init(void)
 		case -1: return -1;
 		default: _exit(0);      /* exit parent */
 	}
+<<<<<<< HEAD
 	return (fds[1]);
 }
 
@@ -113,6 +117,16 @@ int xdaemon_init(void)
  */
 
 void xdaemon_finish(int fd)
+=======
+	return 0;
+}
+
+/*
+ * finish daemonization after pidfile was written
+ */
+
+void xdaemon_finish(void)
+>>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 {
 	/*
 	 * PID file was written, now do
@@ -132,6 +146,7 @@ void xdaemon_finish(int fd)
 		error("Unable to dup /dev/null onto stderr: %m");
 	if (close(devnull) < 0)
 		error("Unable to close /dev/null: %m");
+<<<<<<< HEAD
 	if ((fd >= 0) && (close (fd) < 0)) {
 		error( "Failed to close write-pipe in grandchild process");
 	}
@@ -141,11 +156,23 @@ void xdaemon_finish(int fd)
  * keep depercated api
  */
 
+=======
+}
+
+/* 
+ * keep depercated api
+ */
+
+>>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 int xdaemon(void)
 {
 	int ret_val;
 	ret_val= xdaemon_init();
+<<<<<<< HEAD
 	xdaemon_finish(ret_val);
+=======
+	xdaemon_finish();
+>>>>>>> 2d2b545702d2e88cb47643e5a6f5e7f6ab7ca498
 	return ret_val;
 }
 
