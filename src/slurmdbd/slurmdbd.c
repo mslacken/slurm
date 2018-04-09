@@ -103,7 +103,7 @@ static List lft_rgt_list = NULL;
 static void  _become_slurm_user(void);
 static void  _commit_handler_cancel(void);
 static void *_commit_handler(void *no_data);
-static void  _daemonize(void);
+static int   _daemonize_start(void);
 static void  _default_sigaction(int sig);
 static void  _free_dbd_stats(void);
 static void  _init_config(void);
@@ -127,6 +127,7 @@ int main(int argc, char **argv)
 {
 	char node_name_short[128];
 	char node_name_long[128];
+	int pipefd;
 	void *db_conn = NULL;
 	assoc_init_args_t assoc_init_arg;
 
@@ -150,8 +151,9 @@ int main(int argc, char **argv)
 	slurmdbd_defs_init(slurmdbd_conf->auth_info);
 
 	_kill_old_slurmdbd();
-	if (foreground == 0)
-		_daemonize();
+	if (foreground == 0) {
+		pipefd = _daemonize_start();
+	}
 
 	/*
 	 * Need to create pidfile here in case we setuid() below
@@ -160,6 +162,9 @@ int main(int argc, char **argv)
 	 * able to write a core dump.
 	 */
 	_init_pidfile();
+	if (foreground == 0) {
+		xdaemon_finish(pipefd);
+	}
 	_become_slurm_user();
 	if (foreground == 0)
 		_set_work_dir();
@@ -593,11 +598,14 @@ static void _init_pidfile(void)
 
 /* Become a daemon (child of init) and
  * "cd" to the LogFile directory (if one is configured) */
-static void _daemonize(void)
+static int _daemonize_start(void)
 {
-	if (xdaemon())
+	int retval;
+	retval = xdaemon_init();
+	if (retval == -1)
 		error("daemon(): %m");
 	log_alter(log_opts, LOG_DAEMON, slurmdbd_conf->log_file);
+	return retval;
 }
 
 static void _set_work_dir(void)
