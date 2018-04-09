@@ -250,7 +250,7 @@ static bool         _wait_for_server_thread(void);
 /* main - slurmctld main function, start various threads and process RPCs */
 int main(int argc, char **argv)
 {
-	int cnt, error_code, i;
+	int cnt, error_code, i, fd;
 	struct stat stat_buf;
 	struct rlimit rlim;
 	/* Locks: Write configuration, job, node, and partition */
@@ -298,7 +298,8 @@ int main(int argc, char **argv)
 
 	if (daemonize) {
 		slurmctld_config.daemonize = 1;
-		if (xdaemon())
+		fd = xdaemon_init();
+		if (fd == -1)
 			error("daemon(): %m");
 		log_set_timefmt(slurmctld_conf.log_fmt);
 		log_alter(log_opts, LOG_DAEMON,
@@ -318,6 +319,9 @@ int main(int argc, char **argv)
 	 */
 	_init_pidfile();
 	_become_slurm_user();
+	if (daemonize) {
+		xdaemon_finish(fd);
+	}
 
 	/*
 	 * Create StateSaveLocation directory if necessary.
